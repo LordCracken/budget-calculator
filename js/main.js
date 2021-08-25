@@ -1,6 +1,5 @@
 'use strict';
-const
-  startButton = document.getElementById('start'),
+const startButton = document.getElementById('start'),
   cancelButton = document.querySelector('#cancel'),
   incomeAddButton = document.getElementsByTagName('button')[0],
   expensesAddButton = document.getElementsByTagName('button')[1],
@@ -28,11 +27,9 @@ let incomeItems = document.querySelectorAll('.income-items'),
   sumField = document.querySelectorAll('[placeholder = "Сумма"]'),
   cookieArr;
 
-const
-  isNumber = (n) => {
+const isNumber = n => {
     return !isNaN(parseFloat(n)) && isFinite(n);
   },
-
   setCookie = (key, value, maxAge, year, month, day, path, domain, secure) => {
     let cookieStr = `${encodeURI(key)}=${encodeURI(value)}; samesite=strict`;
     if (year) {
@@ -47,15 +44,13 @@ const
 
     document.cookie = cookieStr;
   },
-
-  getCookie = (name) => {
-    let matches = document.cookie.match(new RegExp(
-      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
+  getCookie = name => {
+    let matches = document.cookie.match(
+      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'),
+    );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   },
-
-  deleteCookie = (name) => {
+  deleteCookie = name => {
     setCookie(name, '', -1);
   };
 
@@ -76,7 +71,6 @@ class AppData {
   }
 
   start() {
-
     this.incomeMonth = 0;
     this.budgetDay = 0;
     this.budgetMonth = 0;
@@ -98,29 +92,30 @@ class AppData {
     this.saveData();
     startButton.style.display = 'none';
     cancelButton.style.display = 'inline-block';
+    console.log(additionalIncomeValue.value);
   }
 
   reset() {
     const inputs = document.querySelectorAll('[type="text"]'),
       range = document.querySelector('[type="range"]');
 
-    inputs.forEach((item) => {
-      item.value = '';
+    inputs.forEach(item => {
+      item.value = null;
     });
     range.value = 1;
     this.changePeriod();
 
     salaryAmount.disabled = false;
-    incomeItems.forEach((item) => {
+    incomeItems.forEach(item => {
       const itemIncome = item.querySelector('.income-title'),
         cashIncome = item.querySelector('.income-amount');
       itemIncome.disabled = false;
       cashIncome.disabled = false;
     });
-    additionalIncomeItem.forEach((item) => {
+    additionalIncomeItem.forEach(item => {
       item.disabled = false;
     });
-    expensesItems.forEach((item) => {
+    expensesItems.forEach(item => {
       const itemExpenses = item.querySelector('.expenses-title'),
         cashExpenses = item.querySelector('.expenses-amount');
       itemExpenses.disabled = false;
@@ -140,7 +135,7 @@ class AppData {
     cancelButton.style.display = 'none';
 
     localStorage.clear();
-    cookieArr.forEach((item) => {
+    cookieArr.forEach(item => {
       deleteCookie(item);
     });
   }
@@ -168,8 +163,12 @@ class AppData {
     budgetMonthValue.value = getCookie('isLoad') ? getCookie('budget-month-value') : this.budgetMonth;
     budgetDayValue.value = getCookie('isLoad') ? getCookie('budget-day-value') : this.budgetDay;
     expensesMonthValue.value = getCookie('isLoad') ? getCookie('expenses-month-value') : this.expensesMonth;
-    additionalExpensesValue.value = getCookie('isLoad') ? getCookie('additional-expenses-value') : this.addExpenses.join(', ');
-    additionalIncomeValue.value = getCookie('isLoad') ? getCookie('additional-income-value') : this.addIncome.join(', ');
+    additionalExpensesValue.value = getCookie('isLoad')
+      ? getCookie('additional-expenses-value')
+      : this.addExpenses.join(', ');
+    additionalIncomeValue.value = getCookie('isLoad')
+      ? getCookie('additional-income-value')
+      : this.addIncome.join(', ');
     targetMonthValue.value = getCookie('isLoad') ? getCookie('target-month-value') : Math.ceil(this.getTargetMonth());
     incomePeriodValue.value = getCookie('isLoad') ? getCookie('income-period-value') : this.calcSavedMoney();
 
@@ -182,16 +181,16 @@ class AppData {
 
   disableInputs() {
     salaryAmount.disabled = true;
-    incomeItems.forEach((item) => {
+    incomeItems.forEach(item => {
       const itemIncome = item.querySelector('.income-title'),
         cashIncome = item.querySelector('.income-amount');
       itemIncome.disabled = true;
       cashIncome.disabled = true;
     });
-    additionalIncomeItem.forEach((item) => {
+    additionalIncomeItem.forEach(item => {
       item.disabled = true;
     });
-    expensesItems.forEach((item) => {
+    expensesItems.forEach(item => {
       const itemExpenses = item.querySelector('.expenses-title'),
         cashExpenses = item.querySelector('.expenses-amount');
       itemExpenses.disabled = true;
@@ -253,7 +252,7 @@ class AppData {
   }
 
   getExpInc() {
-    const count = (item) => {
+    const count = item => {
       const startStr = item.className.split('-')[0];
       const itemTitle = item.querySelector(`.${startStr}-title`).value,
         itemAmount = item.querySelector(`.${startStr}-amount`).value;
@@ -274,14 +273,14 @@ class AppData {
   getAddIncExp() {
     const getAddItem = (array, item) => {
       if (item.length === undefined) {
-        item.value.split(',').forEach((item) => {
+        item.value.split(',').forEach(item => {
           if (item !== '') {
             array.push(item);
           }
         });
       } else {
-        item.forEach((item) => {
-          array.push(item.value);
+        item.forEach(item => {
+          if (item.value) array.push(item.value);
         });
       }
     };
@@ -297,7 +296,7 @@ class AppData {
   }
 
   getBudget() {
-    const monthDeposit = this.moneyDeposit * this.percentDeposit / 100;
+    const monthDeposit = (this.moneyDeposit * this.percentDeposit) / 100;
     this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
     this.budgetDay = Math.ceil(this.budgetMonth / 30);
   }
@@ -360,7 +359,6 @@ class AppData {
 
   eventsListeners() {
     startButton.addEventListener('click', () => {
-
       if (depositBank.value === '' || depositAmount.value === '' || depositPercent.value === '') {
         depositCheck.checked = false;
         this.depositHandler();
@@ -374,8 +372,8 @@ class AppData {
       return !isNumber(salaryAmount.value) ? event.preventDefault() : this.start();
     });
     cancelButton.addEventListener('click', () => this.reset());
-    expensesAddButton.addEventListener('click', (e) => this.addIncExpBlock(e.target));
-    incomeAddButton.addEventListener('click', (e) => this.addIncExpBlock(e.target));
+    expensesAddButton.addEventListener('click', e => this.addIncExpBlock(e.target));
+    incomeAddButton.addEventListener('click', e => this.addIncExpBlock(e.target));
     periodSelect.addEventListener('input', () => this.changePeriod());
     depositCheck.addEventListener('change', this.depositHandler.bind(this));
     this.validate();
@@ -388,13 +386,15 @@ appData.eventsListeners();
 cookieArr = document.cookie.split('; ');
 
 if (getCookie('isLoad')) {
-  cookieArr.forEach((item) => {
+  cookieArr.forEach(item => {
     const key = item.split('=', 1).join();
-    if (localStorage.getItem(key) !== getCookie(key) && key !== 'isLoad' || localStorage.length !== cookieArr.length - 1) {
+    if (
+      (localStorage.getItem(key) !== getCookie(key) && key !== 'isLoad') ||
+      localStorage.length !== cookieArr.length - 1
+    ) {
       appData.reset();
     }
   });
-
 }
 
 if (getCookie('isLoad')) {
